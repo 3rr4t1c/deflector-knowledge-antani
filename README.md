@@ -6,10 +6,10 @@ Cleaned version of an old messy repo from master's thesis project. Now with more
 
 ## Contents:
 
-This repository contains files and packages for a full run of *Deflector Framework* wich is a system aimed to increase mainly the precision of a relation extraction model. *Deflector* need two pre-trained models: A Relation Extraction model and a Link Prediction model. First, the relation extraction model is used for extracting relations, tracking associations with corresponding pattern (e.g. Whoa! I found 'married to' in between 'Joseph' and 'Maria', I can infer the fact [Joseph, sposue, Maria] cause I know 'married to' mean <spouse> relation, *Deflector record that you know this association and the entities involved 'Joseph' and 'Maria'*). Then the Link Prediction model is exploited in a funky way to reject some of this associations that can be bad.  
+This repository contains files and packages for a full run of *Deflector Framework* wich is a system aimed to increase mainly the precision of a relation extraction model. *Deflector* need two pre-trained models: A Relation Extraction model and a Link Prediction model. First, the relation extraction model is used for extracting relations, tracking associations with corresponding pattern (e.g. *relation-extraction-model*: Whoa! I found 'married to' in between 'Joseph' and 'Maria', I can infer the fact \[Joseph, spouse, Maria\] cause I know 'married to' mean \<spouse\> relation so *Deflector record that you know this association and the entities involved 'Joseph' and 'Maria'*). Then the Link Prediction model is exploited in a funky way to reject some of this associations that can be bad, such as {'met', \<spouse\>}.  
 Here it is a description of files and folder:
 
-1. `run_test.py` It is the main script. Running it will execute the entire pipeline for testing *Deflector* and produce an output in the `output_data` folder (existing files will be overwrited).
+1. `run_test.py` It is the main script. Running it will execute the entire pipeline for testing *Deflector* and produce an output in the `output_data` folder (existing files will be overwritten).
 2. `tools.py` It's a module providing some utility for saving, printing and more.
 3. `wrappers.py` This module define the wrappers for *Relation Extraction* and *Link Prediction* models.
 4. `deflector.py` Define the *Deflector* object used for testing.
@@ -24,8 +24,8 @@ In brief, `banned_patterns.tsv` is a subset of `pattern2relation.tsv`
 
 ## Instruction:
 
-*. *FULL RUN*: Execute `run_test.py`, then `benchmarks\init_ground_truth.py`, open the `ground_truth.tsv` file and manually label all what you want. Run `benchmarks\evaluation.ipynb` to evaluate the framework.
-*. *EVALUATION RUN*: If you have already done with manual labelling the ground truth then run `benchmarks\evaluation.ipynb` for visualize the results.
+* *FULL RUN*: Execute `run_test.py`, then `benchmarks\init_ground_truth.py`, open the `ground_truth.tsv` file and manually label all what you want. Run `benchmarks\evaluation.ipynb` to evaluate the framework.
+* *EVALUATION RUN*: If you have already done with manual labelling the ground truth then run `benchmarks\evaluation.ipynb` for visualize the results.
 
 ---
 
