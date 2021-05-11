@@ -1,0 +1,53 @@
+python3 kg_splitter.py test_build/kg_degree_build.tsv
+
+Checking entities...Done.
+
+Training Set:
+                                                   h            r                                  t
+0                                     Saddam_Hussein        party                       Ba'ath_Party
+1                                St._James,_New_York     isPartOf           Suffolk_County,_New_York
+2                                Lexington,_Missouri     isPartOf         Lafayette_County,_Missouri
+3       Saint_Helena,_Ascension_and_Tristan_da_Cunha          map                       Saint_Helena
+5                                Clark,_South_Dakota     isPartOf         Clark_County,_South_Dakota
+...                                              ...          ...                                ...
+742297                                    California         part  La_Crescenta-Montrose,_California
+742298                                     Wisconsin         part               Cassville,_Wisconsin
+742299                                David_Lee_Roth  recordLabel                        CMH_Records
+742301                         Augusto_César_Sandino   deathPlace                            Managua
+742302                                       Malayer     isPartOf                   Hamadan_Province
+
+[652303 rows x 3 columns]
+
+Validation Set:
+                                            h                 r                                 t
+87337                                 Wodaabe           related                       Fula_people
+261499                              Eli_Broad         almaMater         Michigan_State_University
+144426                   Amen_(American_band)        bandMember                       Scott_Sorry
+401187  John_Y._Brown_(politician,_born_1835)             party  Democratic_Party_(United_States)
+128746                             Mark_Pryor             party  Democratic_Party_(United_States)
+...                                       ...               ...                               ...
+174414                                    NBC           similar                             MSNBC
+27498                                    Ryde  ceremonialCounty                     Isle_of_Wight
+662347                              Borknagar        bandMember                  Asgeir_Mickelson
+605891                      Gladys_Bustamante        deathPlace                 Kingston,_Jamaica
+317449                           Kat_Bjelland        birthPlace                     Salem,_Oregon
+
+[5000 rows x 3 columns]
+
+Test Set:
+                              h                        r                           t
+604796         Jervonte_Jackson                     team          Montreal_Alouettes
+564015               UFO_(band)  associatedMusicalArtist  Wild_Horses_(British_band)
+2242      Cook_County,_Illinois                     part                     Chicago
+299                  California                  country               United_States
+51315   Love_and_Rockets_(band)  associatedMusicalArtist              Bauhaus_(band)
+...                         ...                      ...                         ...
+531563           Ricardo_Lunari               birthPlace                   Argentina
+663260           Rivers_Guthrie                     team     Orange_County_Blue_Star
+608148       Kevin_Aherne-Evans                     team       Newport_County_A.F.C.
+218235             Wayne_Hussey  associatedMusicalArtist          The_Mission_(band)
+79997             Ronald_Koeman                     team                   Feyenoord
+
+[85000 rows x 3 columns]
+
+Saving...Done.

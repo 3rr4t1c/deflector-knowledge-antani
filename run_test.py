@@ -11,7 +11,7 @@ import torch
 # (1) patterns (feature vectors) + pairs (subject, object)
 pattern_triples_file = 'input_data/all_patterns_6.2M.tsv'
 # (2) knowledge graph (used for training link prediction too)
-knowledge_graph_file = 'input_data/knowledge_graph_V2/train.txt'
+knowledge_graph_file = 'input_data/knowledge_graph/train.txt'
 
 
 # Relation Extractor (LectorPlus) Training:
@@ -24,19 +24,23 @@ lector_model.clean()
 
 
 # Checkpoint 1: save on disk "output_data\deflector_input.tsv"
-unlabeled_cnames = ['subject', 'subject_type', 'phrase', 'object_type', 'object']
-unlabeled = [(x[1], x[2], x[0], x[4], x[3]) for x in deflector_input]
-saveRecords(unlabeled, file_name='output_data/unlabeled.tsv', sep='\t', header=True, cnames=unlabeled_cnames)
+# UNCOMMENT TO ENABLE CHECKPOINT (This will create a quite big file on disk and is disabled)
+# unlabeled_cnames = ['subject', 'subject_type', 'phrase', 'object_type', 'object']
+# unlabeled = [(x[1], x[2], x[0], x[4], x[3]) for x in deflector_input]
+# saveRecords(unlabeled, file_name='output_data/unlabeled.tsv', sep='\t', header=True, cnames=unlabeled_cnames)
+# UNCOMMENT TO ENABLE CHECKPOINT
 
+## DEBUG ##
 # [print(x) for x in deflector_input[:10]] # DEBUG
 # ('department of', 'Granada_Department', '[AdministrativeRegion]', 'Nicaragua', '[Country]', 'unknown')
 # ('the closure of the', 'South_Africa', '[Country]', 'Reivilo', '[Settlement]', 'unknown')
+## DEBUG ##
 
 
 # Link Prediction (ComplEx) Pre-trained model loading:
 complex_saved_model = 'ComplExPkg\stored_models\ComplEx_V2_d500_bs1000.pt'
 complex_hyperpar = {'dimension': 500, 'init_scale': 1e-3}
-complex_dataset = 'input_data/knowledge_graph_V2'
+complex_dataset = 'input_data/knowledge_graph'
 print('\nCaricamento di ComplEx in corso...', end='')
 complex_model = ComplEx(Dataset(name='CUSTOM', home=complex_dataset), complex_hyperpar)
 complex_model.to('cuda')
@@ -76,11 +80,13 @@ saveRecords(banned_patterns,
 # Print a log
 pd.set_option("display.min_rows", 101)
 
-print('\n**UNLABELED**')
-unlabeled_df = pd.read_csv('output_data/unlabeled.tsv', sep='\t')
-print(unlabeled_df)
+## UNCOMMENT IF CHECKPOINT 1 IS ENABLED
+# print('\n**UNLABELED**')
+# unlabeled_df = pd.read_csv('output_data/unlabeled.tsv', sep='\t')
+# print(unlabeled_df)
+## UNCOMMENT IF CHECKPOINT 1 IS ENABLED
 
-print('\n**PATTERN TO RELATION ASSOCIATIONS**')
+print('\n**USED PATTERN TO RELATION ASSOCIATIONS**')
 pattern2relation_df = pd.read_csv('output_data/pattern2relation.tsv', sep='\t')
 print(pattern2relation_df)
 custom_stats(pattern2relation_df, max_rows=400, col_names=['relation'])
@@ -89,17 +95,3 @@ print('\n**BANNED PATTERNS**')
 banned_patterns_df = pd.read_csv('output_data/banned_patterns.tsv', sep='\t')
 print(banned_patterns_df)
 custom_stats(banned_patterns_df, max_rows=400, col_names=['relation'])
-
-
-
-# print(f'Pattern rilevati in totale: {len(deflector.pattern2relation)}')
-# print(f'Esempio:')
-# [print(x) for x in deflector.pattern2relation[:10]]
-
-# print(f'\nPattern inseriti nella blacklist: {len(deflector.pattern_black_list.items())}')
-# print(f'Esempio:')
-# [print(x) for x in deflector.pattern_black_list.items() if x[1][0] == 'spouse']
-
-
-
-
