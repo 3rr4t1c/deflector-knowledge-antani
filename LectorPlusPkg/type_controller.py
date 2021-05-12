@@ -76,7 +76,7 @@ def types_remap(hierarchy_filepath, h_level=-1, starred_types=None):
 ## TEST AREA ##
 if __name__ == '__main__':
     
-    hierarchy = load_tsv('data/dbpedia_stuff/types_hierarchy.tsv')
+    hierarchy = load_tsv('dbpedia_types_hierarchy.tsv')
 
     hmap = build_hierarchy_map(hierarchy)
 
@@ -84,7 +84,7 @@ if __name__ == '__main__':
         print(f'{k}: {v}')
 
 
-    remap1 = types_remap('data/dbpedia_stuff/types_hierarchy.tsv', -1, ['Person'])
+    remap1 = types_remap('dbpedia_types_hierarchy.tsv', -2)
 
     for k, v in remap1.items():
         print(f'{k}: {v}')

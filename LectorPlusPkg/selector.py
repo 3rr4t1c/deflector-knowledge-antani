@@ -71,12 +71,12 @@ class SELector:
                 for rel in kg_dict[(e1,e2)]:
                     triple = (phr, e1, t1, e2, t2, rel)
                     if self.no_types:
-                        triple = (phr, e1, '', e2, '', rel)
+                        triple = (phr, e1, '[GenericSubjectType]', e2, '[GenericObjectType]', rel)
                     self.labeled_triples.append(triple)
             except:
                 triple = (phr, e1, t1, e2, t2, 'unknown')
                 if self.no_types:
-                    triple = (phr, e1, '', e2, '', 'unknown')
+                    triple = (phr, e1, '[GenericSubjectType]', e2, '[GenericObjectType]', 'unknown')
                 self.unlabeled_triples.append(triple)
 
         # In effetti mantenere gli id delle entità non servirebbe per la fase successiva ma...
@@ -185,7 +185,7 @@ class SELector:
         
         # Controllo se modalità senza tipi è attiva
         if self.no_types:
-            t1, t2 = '', ''
+            t1, t2 = '[GenericSubjectType]', '[GenericObjectType]'
 
         # Riassegnazione tipi
         if self.type_remapping:

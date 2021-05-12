@@ -1,4 +1,5 @@
 from LectorPlusPkg.selector import SELector
+from LectorPlusPkg.type_controller import types_remap
 from ComplExPkg.complexModel import ComplEx, Dataset
 from wrappers import REWrapper, LPWrapper
 from deflector import Deflector
@@ -9,7 +10,7 @@ import torch
 
 # Input: 
 # (1) patterns (feature vectors) + pairs (subject, object)
-pattern_triples_file = 'input_data/all_patterns_6.2M.tsv'
+pattern_triples_file = 'input_data/wiki_patterns.tsv'
 # (2) knowledge graph (used for training link prediction too)
 knowledge_graph_file = 'input_data/knowledge_graph/train.txt'
 
@@ -17,6 +18,7 @@ knowledge_graph_file = 'input_data/knowledge_graph/train.txt'
 # Relation Extractor (LectorPlus) Training:
 # Distant Supervision: get Unlabeled Patterns (SAVE TSV FILE) n.b. l'etichetta unknown non serve
 # LectorPlus will learn (pattern -> relation) associations
+#lector_model = SELector(rseed=42, unlabeled_sub=0, type_remapping=types_remap('LectorPlusPkg\dbpedia_types_hierarchy.tsv', -2))
 lector_model = SELector(rseed=42, unlabeled_sub=0)
 lector_model.train(pattern_triples_file, knowledge_graph_file, auto_clean=False)
 deflector_input = [x[:-1] for x in lector_model.all_unlabeled_triples] # Remove unknown label 
@@ -38,8 +40,8 @@ lector_model.clean()
 
 
 # Link Prediction (ComplEx) Pre-trained model loading:
-complex_saved_model = 'ComplExPkg\stored_models\ComplEx_V2_d500_bs1000.pt'
-complex_hyperpar = {'dimension': 500, 'init_scale': 1e-3}
+complex_saved_model = 'ComplExPkg\stored_models\ComplEx_V1_d200_bs512.pt'
+complex_hyperpar = {'dimension': 200, 'init_scale': 1e-3}
 complex_dataset = 'input_data/knowledge_graph'
 print('\nCaricamento di ComplEx in corso...', end='')
 complex_model = ComplEx(Dataset(name='CUSTOM', home=complex_dataset), complex_hyperpar)
@@ -89,9 +91,9 @@ pd.set_option("display.min_rows", 101)
 print('\n**USED PATTERN TO RELATION ASSOCIATIONS**')
 pattern2relation_df = pd.read_csv('output_data/pattern2relation.tsv', sep='\t')
 print(pattern2relation_df)
-custom_stats(pattern2relation_df, max_rows=400, col_names=['relation'])
+custom_stats(pattern2relation_df, max_rows=30, col_names=['relation'])
 
 print('\n**BANNED PATTERNS**')
 banned_patterns_df = pd.read_csv('output_data/banned_patterns.tsv', sep='\t')
 print(banned_patterns_df)
-custom_stats(banned_patterns_df, max_rows=400, col_names=['relation'])
+custom_stats(banned_patterns_df, max_rows=30, col_names=['relation'])
