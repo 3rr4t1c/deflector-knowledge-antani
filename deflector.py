@@ -104,6 +104,8 @@ class Deflector:
 
         # Build dictionary {pair: predicted relations as a set}
         pair2pred = self.batch_predict(pattern2instances, self.link_prediction_model, batch_size=bs)
+        
+        self.get_statistics(pattern2instances, pair2pred) # New: this will collect some statistics about clusters
 
         print('\nDeflecting patterns...')
         for pattern, track in tqdm(pattern2instances.items()):
@@ -139,3 +141,63 @@ class Deflector:
                 # Pattern discovery
                 if max_rel_score >= pd_thresh:
                     self.pattern_discovery[pattern] = (max_rel1, max_rel_score)
+
+
+    # Calcola alcune statistiche sui cluster di coppie associate ad un pattern
+    def get_statistics(self, pattern2track, pair2pred):
+        
+        self.statistics = {'total_clusters': 0,
+                           'cluster_sizes': [],
+                           'unknown_sizes': [],
+                           'known_sizes': [],
+                           'unknown_perc': []}
+
+        # Itera per ciascun cluster di coppie relativa ad una 
+        # associazione pattern-relazione appresa da Lector
+        for _, track in pattern2track.items():
+            relation, pairs = track
+            
+            # Salta i pattern associati a nessuna relazione
+            if relation == 'unknown':
+                continue 
+
+            predictions = [pair2pred[pair] for pair in pairs]
+            cluster_size = len(predictions)
+            unknown_size = len([p for p in predictions if 'unknown' in p])
+
+            self.statistics['total_clusters'] += 1
+            self.statistics['cluster_sizes'].append(cluster_size)
+            self.statistics['unknown_sizes'].append(unknown_size)
+            self.statistics['known_sizes'].append(cluster_size - unknown_size)
+            self.statistics['unknown_perc'].append(unknown_size/cluster_size)
+            
+
+        # Aggrega risultati
+
+        # Statistiche sulle dimensioni dei cluster
+        for name in ['cluster', 'unknown', 'known']:
+            self.statistics[f'mean_{name}_size'] = np.mean(self.statistics[f'{name}_sizes'])
+            self.statistics[f'max_{name}_size'] = np.max(self.statistics[f'{name}_sizes'])
+            self.statistics[f'min_{name}_size'] = np.min(self.statistics[f'{name}_sizes'])
+            self.statistics[f'std_{name}_size'] = np.std(self.statistics[f'{name}_sizes'])
+            # Percentuale media e deviazione standard del contenuto di 'unknown' prediction in un cluster
+            if name == 'unknown':
+                self.statistics[f'mean_{name}_perc'] = np.mean(self.statistics[f'{name}_perc'])
+                self.statistics[f'std_{name}_perc'] = np.std(self.statistics[f'{name}_perc'])
+
+        # Cluster contenenti solo unknown (LP non conosce almeno una delle due entità in predizione)
+        self.statistics['unknown_clusters'] = 0
+        for n, size in enumerate(self.statistics['cluster_sizes']):
+            if size == self.statistics['unknown_sizes'][n]:
+                self.statistics['unknown_clusters'] += 1
+
+        # Rimozione chiavi associate a liste di valori
+        del(self.statistics['cluster_sizes'])
+        del(self.statistics['unknown_sizes'])
+        del(self.statistics['known_sizes'])
+        del(self.statistics['unknown_perc'])
+            
+
+        
+
+            

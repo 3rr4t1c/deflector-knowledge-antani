@@ -1,7 +1,7 @@
 from LectorPlusPkg.selector import SELector
 from LectorPlusPkg.type_controller import types_remap
 from ComplExPkg.complexModel import ComplEx, Dataset
-from wrappers import REWrapper, LPWrapper
+from wrappers import REWrapper, LPWrapper, LPWrapperMaxScore
 from deflector import Deflector
 from tools import saveRecords, custom_stats
 import pandas as pd
@@ -40,8 +40,8 @@ lector_model.clean()
 
 
 # Link Prediction (ComplEx) Pre-trained model loading:
-complex_saved_model = 'ComplExPkg\stored_models\ComplEx_V1_d200_bs512.pt'
-complex_hyperpar = {'dimension': 200, 'init_scale': 1e-3}
+complex_saved_model = 'ComplExPkg\stored_models\ComplEx_V1_d1000_bs1000.pt'
+complex_hyperpar = {'dimension': 1000, 'init_scale': 1e-3}
 complex_dataset = 'input_data/knowledge_graph'
 print('\nCaricamento di ComplEx in corso...', end='')
 complex_model = ComplEx(Dataset(name='CUSTOM', home=complex_dataset), complex_hyperpar)
@@ -53,12 +53,12 @@ print('Fatto.')
 
 # Wrappers
 lector_wrapper = REWrapper(lector_model)
-complex_wrapper = LPWrapper(complex_model)
+complex_wrapper = LPWrapperMaxScore(complex_model)
 
 
 # Deflector
 deflector = Deflector(lector_wrapper, complex_wrapper)
-deflector.deflect_patterns(deflector_input, bl_min_len=1)
+deflector.deflect_patterns(deflector_input, bl_min_len=1, bl_thresh=0.75)
 
 
 # Save pattern to relations associations
@@ -97,3 +97,11 @@ print('\n**BANNED PATTERNS**')
 banned_patterns_df = pd.read_csv('output_data/banned_patterns.tsv', sep='\t')
 print(banned_patterns_df)
 custom_stats(banned_patterns_df, max_rows=30, col_names=['relation'])
+
+
+[print(f'{k}: {v}') for k, v in deflector.statistics.items()]
+
+# Save statistics on disk
+import json
+with open('output_data/statistics.json', 'w') as fp:
+    json.dump({k: int(v) for k, v in deflector.statistics.items()}, fp)
