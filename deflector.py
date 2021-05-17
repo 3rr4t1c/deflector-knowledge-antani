@@ -146,7 +146,7 @@ class Deflector:
     # Calcola alcune statistiche sui cluster di coppie associate ad un pattern
     def get_statistics(self, pattern2track, pair2pred):
         
-        self.statistics = {'total_clusters': 0,
+        self.statistics = {'total_clusters': np.int32(0),
                            'cluster_sizes': [],
                            'unknown_sizes': [],
                            'known_sizes': [],
@@ -186,7 +186,7 @@ class Deflector:
                 self.statistics[f'std_{name}_perc'] = np.std(self.statistics[f'{name}_perc'])
 
         # Cluster contenenti solo unknown (LP non conosce almeno una delle due entità in predizione)
-        self.statistics['unknown_clusters'] = 0
+        self.statistics['unknown_clusters'] = np.int32(0)
         for n, size in enumerate(self.statistics['cluster_sizes']):
             if size == self.statistics['unknown_sizes'][n]:
                 self.statistics['unknown_clusters'] += 1

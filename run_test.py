@@ -104,4 +104,4 @@ custom_stats(banned_patterns_df, max_rows=30, col_names=['relation'])
 # Save statistics on disk
 import json
 with open('output_data/statistics.json', 'w') as fp:
-    json.dump({k: int(v) for k, v in deflector.statistics.items()}, fp)
+    json.dump({k: v.item() for k, v in deflector.statistics.items()}, fp)
